@@ -7,7 +7,9 @@ from configparser import RawConfigParser
 from influxdb import InfluxDBClient
 from pymodbus.client.sync import ModbusSerialClient as ModbusClient
 
-from growatt import Growatt
+#from growatt import Growatt
+from growatt_sph import Growatt
+
 
 settings = RawConfigParser()
 settings.read(os.path.dirname(os.path.realpath(__file__)) + '/solarmon.cfg')
