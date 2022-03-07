@@ -58,11 +58,11 @@ class Growatt:
         self.read_info()
 
     def read_info(self):
-        row = self.client.read_holding_registers(73, unit=self.unit)
+        row = self.client.read_holding_registers(88, unit=self.unit)
         if type(row) is ModbusIOException:
             raise row
 
-        self.modbusVersion = row.registers[0]
+        self.modbusVersion = row.registers[0]/100
 
     def print_info(self):
         print('Growatt:')
