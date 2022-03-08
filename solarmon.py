@@ -22,6 +22,25 @@ error_interval = settings.getint('query', 'error_interval', fallback=60)
 db_name = settings.get('influx', 'db_name', fallback='inverter')
 measurement = settings.get('influx', 'measurement', fallback='inverter')
 
+#MQTT
+mqtt_client = mqtt.Client()
+mqtt_port = settings.getint('mqtt', 'port', fallback=1883)
+mqtt_host = settings.get('mqtt', 'host', fallback='localhost')
+mqtt_keepalive = settings.getint('mqtt', 'keepalive', fallback=60)
+topic_solar_kwh = settings.get('mqtt', 'kwh_solar_topic', fallback='')
+topic_solar_watt = settings.get('mqtt', 'watt_solar_topic', fallback='')
+
+
+mqtt_client.connect(mqtt_host, mqtt_port, mqtt_keepalive)
+
+#Publish solar/kwh
+if topic_solar_kwh:
+    mqtt_client.publish(topic_solar_kwh, "10")
+
+#Publish solar/watt
+if topic_solar_Watt:
+    mqtt_client.publish(topic_solar_watt, "20")
+
 # Clients
 print('Setup InfluxDB Client... ', end='')
 influx = InfluxDBClient(host=settings.get('influx', 'host', fallback='localhost'),
