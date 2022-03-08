@@ -7,8 +7,8 @@ from configparser import RawConfigParser
 from influxdb import InfluxDBClient
 from pymodbus.client.sync import ModbusSerialClient as ModbusClient
 
-#from growatt import Growatt
-from growatt_sph import Growatt
+from growatt import Growatt
+#from growatt_sph import Growatt
 
 
 settings = RawConfigParser()
