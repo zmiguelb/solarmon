@@ -23,23 +23,18 @@ db_name = settings.get('influx', 'db_name', fallback='inverter')
 measurement = settings.get('influx', 'measurement', fallback='inverter')
 
 #MQTT
+print('Setup MQTT Client... ', end='')
 mqtt_client = mqtt.Client()
 mqtt_port = settings.getint('mqtt', 'port', fallback=1883)
 mqtt_host = settings.get('mqtt', 'host', fallback='localhost')
 mqtt_keepalive = settings.getint('mqtt', 'keepalive', fallback=60)
 topic_solar_kwh = settings.get('mqtt', 'kwh_solar_topic', fallback='')
 topic_solar_watt = settings.get('mqtt', 'watt_solar_topic', fallback='')
-
+topic_battery_soc = settings.get('mqtt', 'soc_battery_topic', fallback='')
+topic_battery_watt = settings.get('mqtt', 'watt_battery_topic', fallback='')
 
 mqtt_client.connect(mqtt_host, mqtt_port, mqtt_keepalive)
-
-#Publish solar/kwh
-if topic_solar_kwh:
-    mqtt_client.publish(topic_solar_kwh, "10")
-
-#Publish solar/watt
-if topic_solar_Watt:
-    mqtt_client.publish(topic_solar_watt, "20")
+print('Done!')
 
 # Clients
 print('Setup InfluxDB Client... ', end='')
@@ -105,6 +100,18 @@ while True:
 
             if not influx.write_points(points, time_precision='s'):
                 print("Failed to write to DB!")
+            #Publish solar/kwh
+            if topic_solar_kwh:
+                mqtt_client.publish(topic_solar_kwh, info["EnergyToday"])
+            #Publish solar/watt
+            if topic_solar_watt:
+                mqtt_client.publish(topic_solar_watt, info["Pac"])
+            #Publish battery/kwh
+            if topic_battery_soc:
+                mqtt_client.publish(topic_battery_soc, info["BatSOC"])
+            #Publish battery/watt
+            if topic_battery_watt:
+                mqtt_client.publish(topic_battery_watt, info["BatPCharge"])
         except Exception as err:
             print(growatt.name)
             print(err)
