@@ -6,6 +6,7 @@ import os
 from configparser import RawConfigParser
 from influxdb import InfluxDBClient
 from pymodbus.client.sync import ModbusSerialClient as ModbusClient
+import paho.mqtt.client as mqtt
 
 #from growatt import Growatt
 from growatt_sph import Growatt

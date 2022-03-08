@@ -106,32 +106,32 @@ class Growatt:
             'Temp': read_single(row, 93)            # 0.1C,     Temperature,        Inverter temperature
         }
         
- #       # Battery data
- #       row = self.client.read_input_registers(1000, 8, unit=self.unit)
- #       info = merge(info, {
- #           'BatPDischarge': read_double(row, 9),   # 0.1W,   Pdischarge1  H,     Discharge power (high)
- #                                                   # 0.1W,   Pdischarge1  L,     Discharge power (low)
- #           'BatPCharge': read_double(row, 11),     # 0.1W,   Pcharge1  H,        Charge power (high)
- #                                                   # 0.1W,   Pcharge1  L,        Charge power (low)
- #           'BatVolt': read_single(row, 13),        # 0.1V,   Vbat,               Battery voltage
- #           'BatSOC': read_single(row, 14),         # 1%,     SOC,                State of charge Capacity
- #           'AC2Grid': read_double(row, 29),        # 0.1W,   Pactogrid total H,  AC power to grid total (high)
- #                                                   # 0.1W,   Pactogrid total L,  AC power to grid total (low)
- #           'Inv2Load': read_double(row, 37),       # 0.1W,   PLocalLoad total H, INV power to local load total (high)
- #                                                   # 0.1W,   PLocalLoad total L, INV power to local load total (low)
- #           'BatTemp': read_single(row, 40)         # 1%,     Battery Temperature,Battery Temperature
- #       })
+        # Battery data
+        row = self.client.read_input_registers(1000, 41, unit=self.unit)
+        info = merge(info, {
+            'BatPDischarge': read_double(row, 9),   # 0.1W,   Pdischarge1  H,     Discharge power (high)
+                                                    # 0.1W,   Pdischarge1  L,     Discharge power (low)
+            'BatPCharge': read_double(row, 11),     # 0.1W,   Pcharge1  H,        Charge power (high)
+                                                    # 0.1W,   Pcharge1  L,        Charge power (low)
+            'BatVolt': read_single(row, 13),        # 0.1V,   Vbat,               Battery voltage
+            'BatSOC': read_single(row, 14),         # 1%,     SOC,                State of charge Capacity
+            'AC2Grid': read_double(row, 29),        # 0.1W,   Pactogrid total H,  AC power to grid total (high)
+                                                    # 0.1W,   Pactogrid total L,  AC power to grid total (low)
+            'Inv2Load': read_double(row, 37),       # 0.1W,   PLocalLoad total H, INV power to local load total (high)
+                                                    # 0.1W,   PLocalLoad total L, INV power to local load total (low)
+            'BatTemp': read_single(row, 40)         # 1%,     Battery Temperature,Battery Temperature
+        })
 
         # UPS information (offline)
-#        row = self.client.read_input_registers(1067, 8, unit=self.unit)
-#        info = merge(info, {
-#            'EPSFAC': read_single(row, 0, 100),     # 0.01Hz,  EPS Fac,     UPSfrequency
-#            'EPSVac1': read_single(row, 1),         # 0.1V,    EPS Vac1,    UPS phase R output voltage
-#            'EPSIac1': read_single(row, 2),         # 0.1V,    EPS Iac1,    UPS phase R output current      
-#            'EPSPac1': read_double(row, 3),         # 0.1VA,   EPS Pac1 H,  UPS phase R output power (high)      
-#                                                    # 0.1VA,   EPS Pac1 L,  UPS phase R output power (low) 
-#            'EPSLoadPer': read_single(row, 14)      # 1%,      Loadpercent, Load percent of UPS ouput
-#        
-#        })
+        row = self.client.read_input_registers(1067, 15, unit=self.unit)
+        info = merge(info, {
+            'EPSFAC': read_single(row, 0, 100),     # 0.01Hz,  EPS Fac,     UPSfrequency
+            'EPSVac1': read_single(row, 1),         # 0.1V,    EPS Vac1,    UPS phase R output voltage
+            'EPSIac1': read_single(row, 2),         # 0.1V,    EPS Iac1,    UPS phase R output current      
+            'EPSPac1': read_double(row, 3),         # 0.1VA,   EPS Pac1 H,  UPS phase R output power (high)      
+                                                    # 0.1VA,   EPS Pac1 L,  UPS phase R output power (low) 
+            'EPSLoadPer': read_single(row, 14,1000)  # 1%,      Loadpercent, Load percent of UPS ouput
+        
+        })
 
         return info
