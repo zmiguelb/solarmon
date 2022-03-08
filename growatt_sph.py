@@ -71,7 +71,7 @@ class Growatt:
         print('\tModbus Version: ' + str(self.modbusVersion))
 
     def read(self):
-        row = self.client.read_input_registers(0, 38, unit=self.unit)
+        row = self.client.read_input_registers(0, 94, unit=self.unit)
         if type(row) is ModbusIOException:
             return None
 
@@ -90,140 +90,48 @@ class Growatt:
             'PV2Curr': read_single(row, 8),         # 0.1A,     PV2Curr,            PV2 input current
             'PV2Watt': read_double(row, 9),         # 0.1W,     PV2Watt H,          PV2 input watt (high)
                                                     # 0.1W,     PV2Watt L,          PV2 input watt (low)
-            'Pac': read_double(row, 11),            # 0.1W,     Pac H,              Output power (high)
+            'Pac': read_double(row, 35),            # 0.1W,     Pac H,              Output power (high)
                                                     # 0.1W,     Pac L,              Output power (low)
             'Fac': read_single(row, 37, 100),       # 0.01Hz,   Fac,                Grid frequency
-            'Vac1': read_single(row, 14),           # 0.1V,     Vac1,               Three/single phase grid voltage
-            'Iac1': read_single(row, 15),           # 0.1A,     Iac1,               Three/single phase grid output current
-            'Pac1': read_double(row, 16),           # 0.1VA,    Pac1 H,             Three/single phase grid output watt (high)
-                                                    # 0.1VA,    Pac1 L,             Three/single phase grid output watt (low)
-            'Vac2': read_single(row, 18),           # 0.1V,     Vac2,               Three phase grid voltage
-            'Iac2': read_single(row, 19),           # 0.1A,     Iac2,               Three phase grid output current
-            #'Pac2': read_double(row, 20),           # 0.1VA,    Pac2 H,             Three phase grid output power (high)
-            #'Fac': read_single(row, 21, 100),       # 0.01Hz,   Fac,                Grid frequency
-                                                    # 0.1VA,    Pac2 L,             Three phase grid output power (low)
-            'Vac3': read_single(row, 22),           # 0.1V,     Vac3,               Three phase grid voltage
-            'Iac3': read_single(row, 23),           # 0.1A,     Iac3,               Three phase grid output current
-            'Pac3': read_double(row, 24),           # 0.1VA,    Pac3 H,             Three phase grid output power (high)
-                                                    # 0.1VA,    Pac3 L,             Three phase grid output power (low)
-            'EnergyToday': read_double(row, 26),    # 0.1kWh,   Energy today H,     Today generate energy (high)
+            'Vac1': read_single(row, 38),           # 0.1V,     Vac1,               Three/single phase grid voltage
+            'Iac1': read_single(row, 39),           # 0.1A,     Iac1,               Three/single phase grid output current
+            'Pac1': read_double(row, 40),           # 0.1VA,    Pac1 H,             Three/single phase grid output watt (high)
+ 
+            'EnergyToday': read_double(row, 53),    # 0.1kWh,   Energy today H,     Today generate energy (high)
                                                     # 0.1kWh,   Energy today L,     Today generate energy today (low)
-            'EnergyTotal': read_double(row, 28),    # 0.1kWh,   Energy total H,     Total generate energy (high)
+            'EnergyTotal': read_double(row, 55),    # 0.1kWh,   Energy total H,     Total generate energy (high)
                                                     # 0.1kWh,   Energy total L,     Total generate energy (low)
-            'TimeTotal': read_double(row, 30, 2),   # 0.5S,     Time total H,       Work time total (high)
+            'TimeTotal': read_double(row, 57, 2),   # 0.5S,     Time total H,       Work time total (high)
                                                     # 0.5S,     Time total L,       Work time total (low)
-            'Temp': read_single(row, 32)            # 0.1C,     Temperature,        Inverter temperature
+            'Temp': read_single(row, 93)            # 0.1C,     Temperature,        Inverter temperature
         }
+    # # Battery data
+    #     row = self.client.read_input_registers(1000, 8, unit=self.unit)
+    #     info = merge(info, {
+    #         'BatPDischarge': read_double(row, 9),   # 0.1W,   Pdischarge1  H,     Discharge power (high)
+    #                                                 # 0.1W,   Pdischarge1  L,     Discharge power (low)
+    #         'BatPCharge': read_double(row, 11),     # 0.1W,   Pcharge1  H,        Charge power (high)
+    #                                                 # 0.1W,   Pcharge1  L,        Charge power (low)
+    #         'BatVolt': read_single(row, 13),        # 0.1V,   Vbat,               Battery voltage
+    #         'BatSOC': read_single(row, 14),         # 1%,     SOC,                State of charge Capacity
+    #         'AC2Grid': read_double(row, 29),        # 0.1W,   Pactogrid total H,  AC power to grid total (high)
+    #                                                 # 0.1W,   Pactogrid total L,  AC power to grid total (low)
+    #         'Inv2Load': read_double(row, 37),       # 0.1W,   PLocalLoad total H, INV power to local load total (high)
+    #                                                 # 0.1W,   PLocalLoad total L, INV power to local load total (low)
+    #         'BatTemp': read_single(row, 40)         # 1%,     Battery Temperature,Battery Temperature
+    #     })
 
-        row = self.client.read_input_registers(33, 8, unit=self.unit)
-        info = merge(info, {
-            'ISOFault': read_single(row, 0),        # 0.1V,     ISO fault Value,    ISO Fault value
-            'GFCIFault': read_single(row, 1, 1),    # 1mA,      GFCI fault Value,   GFCI fault Value
-            'DCIFault': read_single(row, 2, 100),   # 0.01A,    DCI fault Value,    DCI fault Value
-            'VpvFault': read_single(row, 3),        # 0.1V,     Vpv fault Value,    PV voltage fault value
-            'VavFault': read_single(row, 4),        # 0.1V,     Vac fault Value,    AC voltage fault value
-            'FacFault': read_single(row, 5, 100),   # 0.01 Hz,  Fac fault Value,    AC frequency fault value
-            'TempFault': read_single(row, 6),       # 0.1C,     Temp fault Value,   Temperature fault value
-            'FaultCode': row.registers[7],          #           Fault code,         Inverter fault bit
-            'Fault': ErrorCodes[row.registers[7]]
-        })
+    # # UPS information (offline)
+    #     row = self.client.read_input_registers(1067, 8, unit=self.unit)
+    #     info = merge(info, {
+    #         'EPSFAC': read_single(row, 0, 100),     # 0.01Hz,  EPS Fac,     UPSfrequency
+    #         'EPSVac1': read_single(row, 1),         # 0.1V,    EPS Vac1,    UPS phase R output voltage
+    #         'EPSIac1': read_single(row, 2),         # 0.1V,    EPS Iac1,    UPS phase R output current      
+    #         'EPSPac1': read_double(row, 3),         # 0.1VA,   EPS Pac1 H,  UPS phase R output power (high)      
+    #                                                 # 0.1VA,   EPS Pac1 L,  UPS phase R output power (low) 
+    #         'EPSLoadPer': read_single(row, 14)      # 1%,      Loadpercent, Load percent of UPS ouput
+            
+    #     })
 
-        # row = self.client.read_input_registers(41, 1, unit=self.unit)
-        # info = merge_dicts(info, {
-        #    'IPMTemp': read_single(row, 0),         # 0.1C,     IPM Temperature,    The inside IPM in inverter Temperature
-        # })
-
-        row = self.client.read_input_registers(42, 2, unit=self.unit)
-        info = merge(info, {
-            'PBusV': read_single(row, 0),           # 0.1V,     P Bus Voltage,      P Bus inside Voltage
-            'NBusV': read_single(row, 1),           # 0.1V,     N Bus Voltage,      N Bus inside Voltage
-        })
-
-        # row = self.client.read_input_registers(44, 3, unit=self.unit)
-        # info = merge_dicts(info, {
-        #                                            #           Check Step,         Product check step
-        #                                            #           IPF,                Inverter output PF now
-        #                                            #           ResetCHK,           Reset check data
-        # })
-        #
-        # row = self.client.read_input_registers(47, 1, unit=self.unit)
-        # info = merge_dicts(info, {
-        #    'DeratingMode': row.registers[6],       #           DeratingMode,       DeratingMode
-        #    'Derating': DeratingMode[row.registers[6]]
-        # })
-
-        row = self.client.read_input_registers(48, 16, unit=self.unit)
-        info = merge(info, {
-            'Epv1_today': read_double(row, 0),      # 0.1kWh,   Epv1_today H,       PV Energy today
-                                                    # 0.1kWh,   Epv1_today L,       PV Energy today
-            'Epv1_total': read_double(row, 2),      # 0.1kWh,   Epv1_total H,       PV Energy total
-                                                    # 0.1kWh,   Epv1_total L,       PV Energy total
-            'Epv2_today': read_double(row, 4),      # 0.1kWh,   Epv2_today H,       PV Energy today
-                                                    # 0.1kWh,   Epv2_today L,       PV Energy today
-            'Epv2_total': read_double(row, 6),      # 0.1kWh,   Epv2_total H,       PV Energy total
-                                                    # 0.1kWh,   Epv2_total L,       PV Energy total
-            'Epv_total': read_double(row, 8),       # 0.1kWh,   Epv_total H,        PV Energy total
-                                                    # 0.1kWh,   Epv_total L,        PV Energy total
-            'Rac': read_double(row, 10),            # 0.1Var,   Rac H,              AC Reactive power
-                                                    # 0.1Var,   Rac L,              AC Reactive power
-            'E_rac_today': read_double(row, 12),    # 0.1kVarh, E_rac_today H,      AC Reactive energy
-                                                    # 0.1kVarh, E_rac_today L,      AC Reactive energy
-            'E_rac_total': read_double(row, 14),    # 0.1kVarh, E_rac_total H,      AC Reactive energy
-                                                    # 0.1kVarh, E_rac_total L,      AC Reactive energy
-        })
-
-        # row = self.client.read_input_registers(64, 2, unit=self.unit)
-        # info = merge_dicts(info, {
-        #    'WarningCode': row.registers[0],        #           WarningCode,        Warning Code
-        #    'WarningValue': row.registers[1],       #           WarningValue,       Warning Value
-        # })
-        #
-        # info = merge_dicts(info, self.read_fault_table('GridFault', 90, 5))
 
         return info
-
-    # def read_fault_table(self, name, base_index, count):
-    #     fault_table = {}
-    #     for i in range(0, count):
-    #         fault_table[name + '_' + str(i)] = self.read_fault_record(base_index + i * 5)
-    #     return fault_table
-    #
-    # def read_fault_record(self, index):
-    #     row = self.client.read_input_registers(index, 5, unit=self.unit)
-    #     # TODO: Figure out how to read the date for these records?
-    #     print(row.registers[0],
-    #             ErrorCodes[row.registers[0]],
-    #             '\n',
-    #             row.registers[1],
-    #             row.registers[2],
-    #             row.registers[3],
-    #             '\n',
-    #             2000 + (row.registers[1] >> 8),
-    #             row.registers[1] & 0xFF,
-    #             row.registers[2] >> 8,
-    #             row.registers[2] & 0xFF,
-    #             row.registers[3] >> 8,
-    #             row.registers[3] & 0xFF,
-    #             row.registers[4],
-    #             '\n',
-    #             2000 + (row.registers[1] >> 4),
-    #             row.registers[1] & 0xF,
-    #             row.registers[2] >> 4,
-    #             row.registers[2] & 0xF,
-    #             row.registers[3] >> 4,
-    #             row.registers[3] & 0xF,
-    #             row.registers[4]
-    #           )
-    #     return {
-    #         'FaultCode': row.registers[0],
-    #         'Fault': ErrorCodes[row.registers[0]],
-    #         #'Time': int(datetime.datetime(
-    #         #    2000 + (row.registers[1] >> 8),
-    #         #    row.registers[1] & 0xFF,
-    #         #    row.registers[2] >> 8,
-    #         #    row.registers[2] & 0xFF,
-    #         #    row.registers[3] >> 8,
-    #         #    row.registers[3] & 0xFF
-    #         #).timestamp()),
-    #         'Value': row.registers[4]
-    #     }
