@@ -71,7 +71,7 @@ class Growatt:
         print('\tModbus Version: ' + str(self.modbusVersion))
 
     def read(self):
-        row = self.client.read_input_registers(0, 38, unit=self.unit)
+        row = self.client.read_input_registers(0, 33, unit=self.unit)
         if type(row) is ModbusIOException:
             return None
 
@@ -92,15 +92,14 @@ class Growatt:
                                                     # 0.1W,     PV2Watt L,          PV2 input watt (low)
             'Pac': read_double(row, 11),            # 0.1W,     Pac H,              Output power (high)
                                                     # 0.1W,     Pac L,              Output power (low)
-            'Fac': read_single(row, 37, 100),       # 0.01Hz,   Fac,                Grid frequency
+            'Fac': read_single(row, 13, 100),       # 0.01Hz,   Fac,                Grid frequency
             'Vac1': read_single(row, 14),           # 0.1V,     Vac1,               Three/single phase grid voltage
             'Iac1': read_single(row, 15),           # 0.1A,     Iac1,               Three/single phase grid output current
             'Pac1': read_double(row, 16),           # 0.1VA,    Pac1 H,             Three/single phase grid output watt (high)
                                                     # 0.1VA,    Pac1 L,             Three/single phase grid output watt (low)
             'Vac2': read_single(row, 18),           # 0.1V,     Vac2,               Three phase grid voltage
             'Iac2': read_single(row, 19),           # 0.1A,     Iac2,               Three phase grid output current
-            #'Pac2': read_double(row, 20),           # 0.1VA,    Pac2 H,             Three phase grid output power (high)
-            #'Fac': read_single(row, 21, 100),       # 0.01Hz,   Fac,                Grid frequency
+            'Pac2': read_double(row, 20),           # 0.1VA,    Pac2 H,             Three phase grid output power (high)
                                                     # 0.1VA,    Pac2 L,             Three phase grid output power (low)
             'Vac3': read_single(row, 22),           # 0.1V,     Vac3,               Three phase grid voltage
             'Iac3': read_single(row, 23),           # 0.1A,     Iac3,               Three phase grid output current
