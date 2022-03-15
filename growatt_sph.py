@@ -71,7 +71,7 @@ class Growatt:
         print('\tModbus Version: ' + str(self.modbusVersion))
 
     def read(self):
-        row = self.client.read_input_registers(0, 94, unit=self.unit)
+        row = self.client.read_input_registers(0, 118, unit=self.unit)
         if type(row) is ModbusIOException:
             return None
 
@@ -103,7 +103,9 @@ class Growatt:
                                                     # 0.1kWh,   Energy total L,     Total generate energy (low)
             'TimeTotal': read_double(row, 57, 2),   # 0.5S,     Time total H,       Work time total (high)
                                                     # 0.5S,     Time total L,       Work time total (low)
-            'Temp': read_single(row, 93)            # 0.1C,     Temperature,        Inverter temperature
+            'Temp': read_single(row, 93),           # 0.1C,     Temperature,        Inverter temperature
+            'Pll': read_double(row, 116)            # 0.1W,     AC charge PowerH,   Grid power to local load (high)
+                                                    # 0.1W,     AC charge Power_L,  Grid power to local load (low)
         }
         
         # Battery data
@@ -115,6 +117,8 @@ class Growatt:
                                                     # 0.1W,   Pcharge1  L,        Charge power (low)
             'BatVolt': read_single(row, 13),        # 0.1V,   Vbat,               Battery voltage
             'BatSOC': read_single(row, 14),         # 1%,     SOC,                State of charge Capacity
+            'AC2User': read_double(row, 21),        # 0.1W,   Pactogrid total H,  AC power to grid total (high)
+                                                    # 0.1W,   Pactogrid total L,  AC power to grid total (low)
             'AC2Grid': read_double(row, 29),        # 0.1W,   Pactogrid total H,  AC power to grid total (high)
                                                     # 0.1W,   Pactogrid total L,  AC power to grid total (low)
             'Inv2Load': read_double(row, 37),       # 0.1W,   PLocalLoad total H, INV power to local load total (high)
