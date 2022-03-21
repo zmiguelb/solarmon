@@ -108,7 +108,7 @@ while True:
                 mqtt_client.publish(topic_solar_watt, info["Pac"])
             #Publish battery/kwh
             if topic_battery_soc:
-                mqtt_client.publish(topic_battery_soc, info["BatSOC"])
+                mqtt_client.publish(topic_battery_soc, info["BatSOC"]*10)
             #Publish battery/watt
             if topic_battery_watt:
                 battery_total = - info["BatPCharge"] + info["BatPDischarge"] 
