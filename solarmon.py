@@ -111,7 +111,8 @@ while True:
                 mqtt_client.publish(topic_battery_soc, info["BatSOC"])
             #Publish battery/watt
             if topic_battery_watt:
-                mqtt_client.publish(topic_battery_watt, info["BatPCharge"])
+                battery_total = - info["BatPCharge"] + info["BatPDischarge"] 
+                mqtt_client.publish(topic_battery_watt, battery_total)
         except Exception as err:
             print(growatt.name)
             print(err)
