@@ -27,7 +27,7 @@ print('Setup MQTT Client... ', end='')
 mqtt_client = mqtt.Client()
 mqtt_port = settings.getint('mqtt', 'port', fallback=1883)
 mqtt_host = settings.get('mqtt', 'host', fallback='localhost')
-mqtt_keepalive = settings.getint('mqtt', 'keepalive', fallback=60)
+mqtt_keepalive = settings.getint('mqtt', 'keepalive', fallback=180)
 topic_solar_kwh = settings.get('mqtt', 'kwh_solar_topic', fallback='')
 topic_solar_watt = settings.get('mqtt', 'watt_solar_topic', fallback='')
 topic_battery_soc = settings.get('mqtt', 'soc_battery_topic', fallback='')
@@ -35,6 +35,8 @@ topic_battery_watt = settings.get('mqtt', 'watt_battery_topic', fallback='')
 
 mqtt_client.connect(mqtt_host, mqtt_port, mqtt_keepalive)
 print('Done!')
+
+
 
 # Clients
 print('Setup InfluxDB Client... ', end='')
@@ -97,7 +99,7 @@ while True:
 
             print(growatt.name)
             print(points)
-
+            
             if not influx.write_points(points, time_precision='s'):
                 print("Failed to write to DB!")
             #Publish solar/kwh
