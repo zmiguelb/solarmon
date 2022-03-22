@@ -33,8 +33,16 @@ topic_solar_watt = settings.get('mqtt', 'watt_solar_topic', fallback='')
 topic_battery_soc = settings.get('mqtt', 'soc_battery_topic', fallback='')
 topic_battery_watt = settings.get('mqtt', 'watt_battery_topic', fallback='')
 
+
+def on_publish(client,userdata,result):                     #create function for publishing callback
+    #print("data published")
+    pass
+
+
 mqtt_client = mqtt.Client(client_id=mqtt_client_name)
+mqtt_client.on_publish = on_publish                          #assign function to callback
 mqtt_client.connect(mqtt_host, mqtt_port, mqtt_keepalive)
+mqtt_client.loop_start()
 print('Done!')
 
 
@@ -105,17 +113,21 @@ while True:
                 print("Failed to write to DB!")
             #Publish solar/kwh
             if topic_solar_kwh:
-                mqtt_client.publish(topic_solar_kwh, info["EnergyToday"])
+                ret = mqtt_client.publish(topic_solar_kwh, info["EnergyToday"])
+                print("Error code:"+str(ret[0])+"\tMessage ID:"+str(ret[1]))
             #Publish solar/watt
             if topic_solar_watt:
-                mqtt_client.publish(topic_solar_watt, info["Ppv"])
+                ret = mqtt_client.publish(topic_solar_watt, info["Ppv"])
+                print("Error code:"+str(ret[0])+"\tMessage ID:"+str(ret[1]))
             #Publish battery/kwh
             if topic_battery_soc:
-                mqtt_client.publish(topic_battery_soc, info["BatSOC"]*10)
+                ret = mqtt_client.publish(topic_battery_soc, info["BatSOC"]*10)
+                print("Error code:"+str(ret[0])+"\tMessage ID:"+str(ret[1]))
             #Publish battery/watt
             if topic_battery_watt:
                 battery_total = info["BatPCharge"] - info["BatPDischarge"] 
-                mqtt_client.publish(topic_battery_watt, battery_total)
+                ret = mqtt_client.publish(topic_battery_watt, battery_total)
+                print("Error code:"+str(ret[0])+"\tMessage ID:"+str(ret[1]))
         except Exception as err:
             print(growatt.name)
             print(err)
@@ -125,4 +137,11 @@ while True:
         time.sleep(interval)
     else:
         # If all the inverters are not online because no power is being generated then we sleep for 1 min
+        print("I am sleeping for "+str(offline_interval)+"...")
         time.sleep(offline_interval)
+        print("Closing modbus connection...")
+        client.close()
+        time.sleep(offline_interval)
+        print("Reconnecting modbus client ...")
+        client.connect()
+        print("Reconnected")
