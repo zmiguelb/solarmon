@@ -24,15 +24,16 @@ measurement = settings.get('influx', 'measurement', fallback='inverter')
 
 #MQTT
 print('Setup MQTT Client... ', end='')
-mqtt_client = mqtt.Client()
 mqtt_port = settings.getint('mqtt', 'port', fallback=1883)
 mqtt_host = settings.get('mqtt', 'host', fallback='localhost')
+mqtt_client_name = settings.get('mqtt', 'client_name', fallback= os.uname()[1])
 mqtt_keepalive = settings.getint('mqtt', 'keepalive', fallback=180)
 topic_solar_kwh = settings.get('mqtt', 'kwh_solar_topic', fallback='')
 topic_solar_watt = settings.get('mqtt', 'watt_solar_topic', fallback='')
 topic_battery_soc = settings.get('mqtt', 'soc_battery_topic', fallback='')
 topic_battery_watt = settings.get('mqtt', 'watt_battery_topic', fallback='')
 
+mqtt_client = mqtt.Client(client_id=mqtt_client_name)
 mqtt_client.connect(mqtt_host, mqtt_port, mqtt_keepalive)
 print('Done!')
 
@@ -113,7 +114,7 @@ while True:
                 mqtt_client.publish(topic_battery_soc, info["BatSOC"]*10)
             #Publish battery/watt
             if topic_battery_watt:
-                battery_total = - info["BatPCharge"] + info["BatPDischarge"] 
+                battery_total = info["BatPCharge"] - info["BatPDischarge"] 
                 mqtt_client.publish(topic_battery_watt, battery_total)
         except Exception as err:
             print(growatt.name)

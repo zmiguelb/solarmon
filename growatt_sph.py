@@ -73,6 +73,7 @@ class Growatt:
     def read(self):
         row = self.client.read_input_registers(0, 118, unit=self.unit)
         if type(row) is ModbusIOException:
+            print("Exception in library")
             return None
 
         # http://www.growatt.pl/dokumenty/Inne/Growatt%20PV%20Inverter%20Modbus%20RS485%20RTU%20Protocol%20V3.04.pdf
