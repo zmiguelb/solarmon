@@ -65,6 +65,7 @@ print('Dome!')
 
 print('Loading inverters... ')
 inverters = []
+
 for section in settings.sections():
     if not section.startswith('inverters.'):
         continue
@@ -145,3 +146,21 @@ while True:
         print("Reconnecting modbus client ...")
         client.connect()
         print("Reconnected")
+        print('Re-Loading inverters... ')
+        inverters = []
+
+        for section in settings.sections():
+            if not section.startswith('inverters.'):
+                continue
+
+            name = section[10:]
+            unit = int(settings.get(section, 'unit'))
+            measurement = settings.get(section, 'measurement')
+            growatt = Growatt(client, name, unit)
+            growatt.print_info()
+            inverters.append({
+                'error_sleep': 0,
+                'growatt': growatt,
+                'measurement': measurement
+            })
+        print('Done!')
